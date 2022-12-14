@@ -1,0 +1,9 @@
+{
+  "domain": "panasonic_eolia",
+  "name": "Panasonic Eolia AC",
+  "documentation": "https://github.com/avolmensky/panasonic_eolia/",
+  "dependencies": [],
+  "codeowners": ["avolmensky"],
+  "requirements": ["panasoniceolia==0.0.2"],
+  "version": "1.0.0"
+}

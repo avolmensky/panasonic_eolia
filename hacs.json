@@ -1,0 +1,5 @@
+{
+    "name": "Panasonic Eolia HA component",
+    "domains": ["climate"],
+    "homeassistant": "0.110.0"
+}
