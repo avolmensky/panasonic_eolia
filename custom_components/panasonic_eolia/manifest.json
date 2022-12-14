@@ -4,6 +4,6 @@
   "documentation": "https://github.com/avolmensky/panasonic_eolia/",
   "dependencies": [],
   "codeowners": ["avolmensky"],
-  "requirements": ["panasoniceolia==0.0.2"],
+  "requirements": ["panasoniceolia==0.0.3"],
   "version": "1.0.0"
 }
