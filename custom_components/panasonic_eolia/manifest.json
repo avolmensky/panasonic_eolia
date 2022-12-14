@@ -1,6 +1,7 @@
 {
-  "domain": "panasonic_eolia",
   "name": "Panasonic Eolia AC",
+  "domain": "panasonic_eolia",
+  "iot_class": "cloud_polling",
   "documentation": "https://github.com/avolmensky/panasonic_eolia/",
   "issue_tracker": "https://github.com/avolmensky/panasonic_eolia/issues",
   "dependencies": [],
