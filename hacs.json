@@ -1,5 +1,5 @@
 {
     "name": "Panasonic Eolia HA component",
-    "domains": ["climate"],
-    "homeassistant": "0.110.0"
+    "homeassistant": "0.110.0",
+    "iot_class": "cloud_polling"
 }

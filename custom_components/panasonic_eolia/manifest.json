@@ -2,8 +2,9 @@
   "domain": "panasonic_eolia",
   "name": "Panasonic Eolia AC",
   "documentation": "https://github.com/avolmensky/panasonic_eolia/",
+  "issue_tracker": "https://github.com/avolmensky/panasonic_eolia/issues",
   "dependencies": [],
-  "codeowners": ["avolmensky"],
+  "codeowners": ["@avolmensky"],
   "requirements": ["panasoniceolia==0.0.3"],
-  "version": "1.0.0"
+  "version": "1.0.2"
 }
