@@ -1,4 +1,4 @@
-# Panasonic Ep;oa HA component
+# Panasonic Eolia HA component
 
 A home assistant custom climate component to control Panasonic Eolia airconditioners.
 
