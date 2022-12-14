@@ -66,7 +66,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     password = config.get(CONF_PASSWORD)
 
     import panasoniceolia
-    api = panasoniceolia.Session(username, password, tokenFileName="./token-file.txt", verifySsl=True)
+    api = panasoniceolia.Session(username, password, verifySsl=True)
 
     api.login()
 
