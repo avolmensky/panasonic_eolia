@@ -34,7 +34,7 @@ OPERATION_LIST = {
     HVAC_MODE_COOL: 'Cool',
     HVAC_MODE_AUTO: 'Auto',
     HVAC_MODE_DRY: 'Dry',
-    HVAC_MODE_FAN_ONLY: 'Fan'
+    HVAC_MODE_FAN_ONLY: 'Nanoe'
     }
 
 SUPPORT_FLAGS = (
