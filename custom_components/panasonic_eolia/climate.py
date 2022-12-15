@@ -34,8 +34,12 @@ OPERATION_LIST = {
     HVAC_MODE_COOL: 'Cool',
     HVAC_MODE_AUTO: 'Auto',
     HVAC_MODE_DRY: 'Dry',
-    HVAC_MODE_FAN_ONLY: 'Nanoe'
+    HVAC_MODE_FAN_ONLY: 'Fan'
     }
+
+OPERATION_LIST_EXTRA = {
+    HVAC_MODE_FAN_ONLY: 'Nanoe'
+}
 
 SUPPORT_FLAGS = (
     SUPPORT_TARGET_TEMPERATURE |
@@ -161,6 +165,12 @@ class PanasonicEoliaDevice(ClimateEntity):
         for key, value in OPERATION_LIST.items():
             if value == self._hvac_mode:
                 return key
+
+        for key, value in OPERATION_LIST_EXTRA.items():
+            if value == self._hvac_mode:
+                return key
+
+        return None
 
     @property
     def hvac_modes(self):
