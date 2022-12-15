@@ -2,18 +2,16 @@ import logging
 import voluptuous as vol
 from datetime import timedelta
 from typing import Optional, List
+import panasoniceolia
 import homeassistant.helpers.config_validation as cv
 
 from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity
 
 from homeassistant.components.climate.const import (
-    HVAC_MODE_COOL, HVAC_MODE_HEAT, HVAC_MODE_HEAT_COOL,
+    HVAC_MODE_COOL, HVAC_MODE_HEAT, HVAC_MODE_AUTO,
     HVAC_MODE_DRY, HVAC_MODE_FAN_ONLY, HVAC_MODE_OFF,
     SUPPORT_TARGET_TEMPERATURE, SUPPORT_FAN_MODE, 
-    SUPPORT_SWING_MODE, SUPPORT_PRESET_MODE,
-    ATTR_CURRENT_TEMPERATURE, ATTR_FAN_MODE,
-    PRESET_ECO, PRESET_NONE, PRESET_BOOST, 
-    ATTR_HVAC_MODE, ATTR_SWING_MODE, ATTR_PRESET_MODE)
+    SUPPORT_SWING_MODE)
 
 from homeassistant.const import (
     TEMP_CELSIUS, ATTR_TEMPERATURE, CONF_USERNAME, CONF_PASSWORD)
@@ -34,17 +32,10 @@ OPERATION_LIST = {
     HVAC_MODE_OFF: 'Off',
     HVAC_MODE_HEAT: 'Heat',
     HVAC_MODE_COOL: 'Cool',
-    HVAC_MODE_HEAT_COOL: 'Auto',
+    HVAC_MODE_AUTO: 'Auto',
     HVAC_MODE_DRY: 'Dry',
     HVAC_MODE_FAN_ONLY: 'Fan'
     }
-
-PRESET_LIST = {
-    PRESET_NONE: 'Auto',
-    PRESET_BOOST: 'Powerful',
-    PRESET_ECO: 'Quiet'
-}
-
 
 SUPPORT_FLAGS = (
     SUPPORT_TARGET_TEMPERATURE |
@@ -65,7 +56,6 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     username = config.get(CONF_USERNAME)
     password = config.get(CONF_PASSWORD)
 
-    import panasoniceolia
     api = panasoniceolia.Session(username, password, verifySsl=True)
 
     api.login()
@@ -75,11 +65,11 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     devices = []
     for device in api.get_devices():
         _LOGGER.debug("Setting up %s ...", device)
-        devices.append(PanasonicDevice(device, api, panasoniceolia.constants))
+        devices.append(PanasonicEoliaDevice(device, api, panasoniceolia.constants))
 
     add_entities(devices, True)
 
-class PanasonicDevice(ClimateEntity):
+class PanasonicEoliaDevice(ClimateEntity):
     """Representation of a Panasonic airconditioning."""
 
     def __init__(self, device, api, constants):
@@ -206,31 +196,6 @@ class PanasonicDevice(ClimateEntity):
     def outside_temperature(self):
         """Return the current temperature."""
         return self._outside_temp
-
-    @property
-    def preset_mode(self) -> Optional[str]:
-        """Return the current preset mode, e.g., home, away, temp.
-        Requires SUPPORT_PRESET_MODE.
-        """
-        return None
-
-    @property
-    def preset_modes(self) -> Optional[List[str]]:
-        """Return a list of available preset modes.
-        Requires SUPPORT_PRESET_MODE.
-        """
-
-        return None
-
-    @api_call_login
-    def set_preset_mode(self, preset_mode: str) -> None:
-        """Set new preset mode."""
-        _LOGGER.debug("Set %s ecomode %s", self.name, preset_mode)
-        self._api.set_device(
-            self._device['id'],
-            power = self._constants.Power.On,
-            eco = self._constants.EcoMode[ PRESET_LIST[preset_mode] ]
-        )
 
 
     @api_call_login
