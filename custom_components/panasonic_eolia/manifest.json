@@ -6,6 +6,6 @@
   "issue_tracker": "https://github.com/avolmensky/panasonic_eolia/issues",
   "dependencies": [],
   "codeowners": ["@avolmensky"],
-  "requirements": ["panasoniceolia==0.0.3"],
+  "requirements": ["panasoniceolia==0.0.4"],
   "version": "1.0.2"
 }
