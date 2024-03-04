@@ -1,6 +1,6 @@
 {
-  "name": "Panasonic Eolia AC",
   "domain": "panasonic_eolia",
+  "name": "Panasonic Eolia AC",
   "codeowners": ["@avolmensky"],
   "dependencies": [],
   "documentation": "https://github.com/avolmensky/panasonic_eolia/",
