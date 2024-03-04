@@ -34,7 +34,10 @@ OPERATION_LIST = {
 SUPPORT_FLAGS = (
     ClimateEntityFeature.TARGET_TEMPERATURE |
     ClimateEntityFeature.FAN_MODE |
-    ClimateEntityFeature.SWING_MODE )
+    ClimateEntityFeature.SWING_MODE |
+    ClimateEntityFeature.TURN_ON |
+    ClimateEntityFeature.TURN_OFF )
+
 
 def api_call_login(func):
     def wrapper_call(*args, **kwargs):
@@ -44,6 +47,7 @@ def api_call_login(func):
             args[0]._api.login()
             func(*args, **kwargs)
     return wrapper_call
+
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the panasonic cloud components."""
@@ -59,9 +63,11 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     devices = []
     for device in api.get_devices():
         _LOGGER.debug("Setting up %s ...", device)
-        devices.append(PanasonicEoliaDevice(device, api, panasoniceolia.constants))
+        devices.append(PanasonicEoliaDevice(
+            device, api, panasoniceolia.constants))
 
     add_entities(devices, True)
+
 
 class PanasonicEoliaDevice(ClimateEntity):
     """Representation of a Panasonic airconditioning."""
@@ -87,17 +93,21 @@ class PanasonicEoliaDevice(ClimateEntity):
         self._airswing_hor = None
         self._airswing_vert = None
 
+        self._enable_turn_on_off_backwards_compatibility = False
+
     def update(self):
         """Update the state of this climate device."""
         try:
-            data= self._api.get_device(self._device['id'])
+            data = self._api.get_device(self._device['id'])
         except:
-            _LOGGER.debug("Error trying to get device {id} state, probably expired token, trying to update it...".format(**self._device))
+            _LOGGER.debug(
+                "Error trying to get device {id} state, probably expired token, trying to update it...".format(**self._device))
             self._api.login()
             data = self._api.get_device(self._device['id'])
 
         if data is None:
-            _LOGGER.debug("Received no data for device {id}".format(**self._device))
+            _LOGGER.debug(
+                "Received no data for device {id}".format(**self._device))
             return
 
         if data['parameters']['temperature'] != 126:
@@ -115,11 +125,10 @@ class PanasonicEoliaDevice(ClimateEntity):
         else:
             self._outside_temp = None
 
-        self._is_on =bool( data['parameters']['power'].value )
+        self._is_on = bool(data['parameters']['power'].value)
         self._hvac_mode = data['parameters']['mode'].name
         self._current_fan = data['parameters']['fanSpeed'].name
         self._airswing_vert = data['parameters']['airSwingVertical'].name
-
 
     @property
     def supported_features(self):
@@ -175,7 +184,7 @@ class PanasonicEoliaDevice(ClimateEntity):
     @property
     def fan_modes(self):
         """Return the list of available fan modes."""
-        return [f.name for f in self._constants.FanSpeed ]
+        return [f.name for f in self._constants.FanSpeed]
 
     @property
     def swing_mode(self):
@@ -185,7 +194,7 @@ class PanasonicEoliaDevice(ClimateEntity):
     @property
     def swing_modes(self):
         """Return the list of available swing modes."""
-        return [f.name for f in self._constants.AirSwingUD ]
+        return [f.name for f in self._constants.AirSwingUD]
 
     @property
     def current_temperature(self):
@@ -196,7 +205,6 @@ class PanasonicEoliaDevice(ClimateEntity):
     def outside_temperature(self):
         """Return the current temperature."""
         return self._outside_temp
-
 
     @api_call_login
     def set_temperature(self, **kwargs):
@@ -209,7 +217,7 @@ class PanasonicEoliaDevice(ClimateEntity):
 
         self._api.set_device(
             self._device['id'],
-            temperature = target_temp
+            temperature=target_temp
         )
 
     @api_call_login
@@ -219,7 +227,7 @@ class PanasonicEoliaDevice(ClimateEntity):
 
         self._api.set_device(
             self._device['id'],
-            fanSpeed = self._constants.FanSpeed[fan_mode]
+            fanSpeed=self._constants.FanSpeed[fan_mode]
         )
 
     @api_call_login
@@ -229,14 +237,14 @@ class PanasonicEoliaDevice(ClimateEntity):
         if hvac_mode == HVACMode.OFF:
             self._api.set_device(
                 self._device['id'],
-                power = self._constants.Power.Off
+                power=self._constants.Power.Off
             )
         else:
 
             self._api.set_device(
                 self._device['id'],
-                power = self._constants.Power.On,
-                mode = self._constants.OperationMode[OPERATION_LIST[hvac_mode]]
+                power=self._constants.Power.On,
+                mode=self._constants.OperationMode[OPERATION_LIST[hvac_mode]]
             )
 
     @api_call_login
@@ -252,9 +260,9 @@ class PanasonicEoliaDevice(ClimateEntity):
 
         self._api.set_device(
             self._device['id'],
-            power = self._constants.Power.On,
-            airSwingVertical = self._constants.AirSwingUD[swing_mode],
-            fanAutoMode = automode
+            power=self._constants.Power.On,
+            airSwingVertical=self._constants.AirSwingUD[swing_mode],
+            fanAutoMode=automode
         )
 
     @property
