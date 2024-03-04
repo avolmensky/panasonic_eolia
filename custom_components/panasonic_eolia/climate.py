@@ -5,13 +5,7 @@ from typing import Optional, List
 import panasoniceolia
 import homeassistant.helpers.config_validation as cv
 
-from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity
-
-from homeassistant.components.climate.const import (
-    HVAC_MODE_COOL, HVAC_MODE_HEAT, HVAC_MODE_AUTO,
-    HVAC_MODE_DRY, HVAC_MODE_FAN_ONLY, HVAC_MODE_OFF,
-    SUPPORT_TARGET_TEMPERATURE, SUPPORT_FAN_MODE, 
-    SUPPORT_SWING_MODE)
+from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity, HVACMode, ClimateEntityFeature
 
 from homeassistant.const import (
     TEMP_CELSIUS, ATTR_TEMPERATURE, CONF_USERNAME, CONF_PASSWORD)
@@ -29,22 +23,18 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 OPERATION_LIST = {
-    HVAC_MODE_OFF: 'Off',
-    HVAC_MODE_HEAT: 'Heat',
-    HVAC_MODE_COOL: 'Cool',
-    HVAC_MODE_AUTO: 'Auto',
-    HVAC_MODE_DRY: 'Dry',
-    HVAC_MODE_FAN_ONLY: 'Fan'
-    }
-
-OPERATION_LIST_EXTRA = {
-    HVAC_MODE_FAN_ONLY: 'Nanoe'
+    HVACMode.OFF: 'Off',
+    HVACMode.HEAT: 'Heat',
+    HVACMode.COOL: 'Cool',
+    HVACMode.HEAT_COOL: 'Auto',
+    HVACMode.DRY: 'Dry',
+    HVACMode.FAN_ONLY: 'Fan'
 }
 
 SUPPORT_FLAGS = (
-    SUPPORT_TARGET_TEMPERATURE |
-    SUPPORT_FAN_MODE |
-    SUPPORT_SWING_MODE )
+    ClimateEntityFeature.TARGET_TEMPERATURE |
+    ClimateEntityFeature.FAN_MODE |
+    ClimateEntityFeature.SWING_MODE )
 
 def api_call_login(func):
     def wrapper_call(*args, **kwargs):
@@ -84,7 +74,7 @@ class PanasonicEoliaDevice(ClimateEntity):
         self._constants = constants
         self._current_temp = None
         self._is_on = False
-        self._hvac_mode = OPERATION_LIST[HVAC_MODE_COOL]
+        self._hvac_mode = OPERATION_LIST[HVACMode.COOL]
 
         self._unit = TEMP_CELSIUS
         self._target_temp = None
@@ -160,15 +150,15 @@ class PanasonicEoliaDevice(ClimateEntity):
     def hvac_mode(self):
         """Return the current operation."""
         if not self._is_on:
-            return HVAC_MODE_OFF
+            return HVACMode.OFF
 
         for key, value in OPERATION_LIST.items():
             if value == self._hvac_mode:
                 return key
 
-        for key, value in OPERATION_LIST_EXTRA.items():
-            if value == self._hvac_mode:
-                return key
+        # for key, value in OPERATION_LIST_EXTRA.items():
+        #     if value == self._hvac_mode:
+        #         return key
 
         return None
 
@@ -236,7 +226,7 @@ class PanasonicEoliaDevice(ClimateEntity):
     def set_hvac_mode(self, hvac_mode):
         """Set operation mode."""
         _LOGGER.debug("Set %s mode %s", self.name, hvac_mode)
-        if hvac_mode == HVAC_MODE_OFF:
+        if hvac_mode == HVACMode.OFF:
             self._api.set_device(
                 self._device['id'],
                 power = self._constants.Power.Off
