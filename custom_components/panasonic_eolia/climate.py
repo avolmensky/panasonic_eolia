@@ -4,11 +4,12 @@ from datetime import timedelta
 from typing import Optional, List
 import panasoniceolia
 import homeassistant.helpers.config_validation as cv
+from homeassistant.const import UnitOfTemperature
 
 from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity, HVACMode, ClimateEntityFeature
 
 from homeassistant.const import (
-    TEMP_CELSIUS, ATTR_TEMPERATURE, CONF_USERNAME, CONF_PASSWORD)
+    ATTR_TEMPERATURE, CONF_USERNAME, CONF_PASSWORD)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -82,7 +83,7 @@ class PanasonicEoliaDevice(ClimateEntity):
         self._is_on = False
         self._hvac_mode = OPERATION_LIST[HVACMode.COOL]
 
-        self._unit = TEMP_CELSIUS
+        self._unit = UnitOfTemperature.CELSIUS
         self._target_temp = None
         self._cur_temp = None
         self._outside_temp = None
@@ -148,7 +149,7 @@ class PanasonicEoliaDevice(ClimateEntity):
     @property
     def temperature_unit(self):
         """Return the unit of measurement."""
-        return TEMP_CELSIUS
+        return UnitOfTemperature.CELSIUS
 
     @property
     def target_temperature(self):
